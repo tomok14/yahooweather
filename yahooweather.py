@@ -277,6 +277,8 @@ def disp_week_table(config: Config, soup, idname):
         title_text = title.get_text()
         title_text = " ".join(title_text.split())
 
+    title_text = f"{config.name} {title_text}"
+
     yahoo_table = pinpoint.find("table") if pinpoint else None
     if yahoo_table is None:
         return
