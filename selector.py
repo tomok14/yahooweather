@@ -1,5 +1,10 @@
+"""
+location.dbに保存されている地点を選択します
+"""
+
 import sqlite3
 from pathlib import Path
+from wcwidth import wcswidth
 from tomlkit import dumps
 from tomlkit import table
 
@@ -8,7 +13,7 @@ CONFIG_FILE = Path.home() / ".config/yahooweather/yahooweather.conf"
 
 
 def print_rows(rows, columns=3):
-    from wcwidth import wcswidth
+    """DBの地点表示"""
 
     items = [f"{i:2d}: {row['name']}" for i, row in enumerate(rows, start=1)]
 
@@ -22,10 +27,13 @@ def print_rows(rows, columns=3):
 
         print(line.rstrip())
 
-        from pathlib import Path
-
 
 def save_config(name, url):
+    """
+    選択された地点をyahooweather.py の
+    コンフィグ(~/.config/yahooweather/yahooweather.conf) に
+    書き込みます
+    """
     CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
     config = table()
@@ -47,7 +55,8 @@ def save_config(name, url):
 
 
 def proc():
-    conn = sqlite3.connect("weather.db")
+    """proc"""
+    conn = sqlite3.connect("location.db")
     conn.row_factory = sqlite3.Row
 
     try:
@@ -136,6 +145,7 @@ def proc():
 
 
 def main():
+    """main"""
     proc()
 
 

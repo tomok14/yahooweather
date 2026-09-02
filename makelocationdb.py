@@ -1,10 +1,22 @@
-import sqlite3
+"""
+location.dbを作成します
+https://weather.yahoo.co.jp/weather/
+の各地点とURLの対応表です。
 
+Yahoo天気の地点は下記のように4段階になっています。
+https://weather.yahoo.co.jp/weather/ - レベル1 全国
+https://weather.yahoo.co.jp/weather/jp/3.html?day=1 - レベル2 東京
+https://weather.yahoo.co.jp/weather/jp/13/?day=1 - レベル3 東京
+https://weather.yahoo.co.jp/weather/jp/13/4410.html - レベル4 東京
+https://weather.yahoo.co.jp/weather/jp/13/4410/13214.html - ピンポイント地点 国分寺市
+"""
+
+import sqlite3
 import requests
 from bs4 import BeautifulSoup
 
 
-conn = sqlite3.connect("weather.db")
+conn = sqlite3.connect("location.db")
 
 conn.execute("""
 CREATE TABLE IF NOT EXISTS weather_location (
@@ -23,6 +35,7 @@ conn.commit()
 
 
 def save_location(name, href, parent_id=None, level=1):
+    """locationを保存する"""
     conn.execute(
         """
         INSERT INTO weather_location
@@ -52,6 +65,7 @@ def save_location(name, href, parent_id=None, level=1):
 
 
 def proc_level4(href, parent_id):
+    """レベル4"""
     # e.g. https://weather.yahoo.co.jp/weather/jp/1a/1100.html
     # base = "https://weather.yahoo.co.jp"
     # url = f"{base}{href}"
@@ -59,7 +73,7 @@ def proc_level4(href, parent_id):
 
     print(f"{url=}, level=4")
 
-    response = requests.get(url)
+    response = requests.get(url, timeout=10.0)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
@@ -91,6 +105,7 @@ def proc_level4(href, parent_id):
 
 
 def proc_level3_naha(href, parent_id):
+    """那覇は特殊"""
     # e.g. https://weather.yahoo.co.jp/weather/jp/1a/1100.html
     # base = "https://weather.yahoo.co.jp"
     # url = f"{base}{href}"
@@ -98,7 +113,7 @@ def proc_level3_naha(href, parent_id):
 
     print(f"{url=}, level=3(naha)")
 
-    response = requests.get(url)
+    response = requests.get(url, timeout=10.0)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
@@ -130,6 +145,7 @@ def proc_level3_naha(href, parent_id):
 
 
 def proc_level3(href, parent_id):
+    """レベル3"""
     # e.g. https://weather.yahoo.co.jp/weather/jp/1a/?day=1
     base = "https://weather.yahoo.co.jp"
     if "http" in href:
@@ -141,7 +157,7 @@ def proc_level3(href, parent_id):
 
     print(f"{url=},level=3")
 
-    response = requests.get(url)
+    response = requests.get(url, timeout=10.0)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
@@ -174,13 +190,14 @@ def proc_level3(href, parent_id):
 
 
 def proc_level2(href, parent_id):
+    """レベル2"""
     # e.g. "https://weather.yahoo.co.jp/weather/jp/1.html?day=1
     base = "https://weather.yahoo.co.jp"
     url = f"{base}{href}"
 
     print(f"{url=}")
 
-    response = requests.get(url)
+    response = requests.get(url, timeout=10.0)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
@@ -213,18 +230,19 @@ def proc_level2(href, parent_id):
 
 
 def proc_leve1():
+    """レベル1"""
     top = "https://weather.yahoo.co.jp/weather/"
 
-    response = requests.get(top)
+    response = requests.get(top, timeout=10.0)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    map = soup.find("div", id="map")
-    if map is None:
+    mapdiv = soup.find("div", id="map")
+    if mapdiv is None:
         raise RuntimeError("mapが見つかりません")
 
-    for li in map.find_all("li", class_="point"):
+    for li in mapdiv.find_all("li", class_="point"):
         a = li.find("a")
         if a is None:
             continue
@@ -251,10 +269,12 @@ def proc_leve1():
 
 
 def proc():
+    """proc"""
     proc_leve1()
 
 
 def main():
+    """main"""
     try:
         proc()
     finally:

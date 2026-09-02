@@ -1,18 +1,25 @@
+"""
+yahoo天気を表示する
+
+[configファイル]
+~/.config/yahooweather/yahooweather.conf
+
+"""
+
 import logging
 import sys
 import re
 import argparse
+import tomllib
+from typing import Any
+from pathlib import Path
+from dataclasses import dataclass
 from zoneinfo import ZoneInfo
 from rich.console import Console
 from rich.table import Table
 from rich import box
-from wcwidth import wcswidth
 from bs4 import BeautifulSoup
 from requests_cache import CachedSession
-import tomllib
-from typing import Any
-from dataclasses import dataclass
-from pathlib import Path
 
 CONFIG_DIR = Path.home() / ".config" / "yahooweather"
 CONFIG_FILE = CONFIG_DIR / "yahooweather.conf"
@@ -30,12 +37,13 @@ class Config:
 
 
 def get_html(config: Config, force=False):
+    """HTML取得"""
     # スクレイピング対象の URL にリクエストを送り HTML を取得する
     url = config.url
     # res = requests.get(url)
     # キャッシュセッションの作成（SQLiteを使用）
 
-    session = CachedSession(CACHE_FILE, expire_after=(60 * 60 * 3))  # 3時間キャッシュ
+    session = CachedSession(CACHE_FILE, expire_after=60 * 60 * 3)  # 3時間キャッシュ
 
     res = session.request("GET", url, force_refresh=force)
 
@@ -50,6 +58,7 @@ def get_html(config: Config, force=False):
 
 
 def sonota(tr):
+    """その他項目"""
     row = []
     for td in tr.find_all("td"):
         text = td.get_text()
@@ -59,6 +68,7 @@ def sonota(tr):
 
 
 def tenki(tr):
+    """天気"""
     row = []
     for td in tr.find_all("td"):
         text = td.get_text()
@@ -85,6 +95,7 @@ def tenki(tr):
 
 
 def kousuiryo(tr):
+    """降水量"""
     row = []
     for i, td in enumerate(tr.find_all("td")):
         text = td.get_text()
@@ -104,6 +115,7 @@ def kousuiryo(tr):
 
 
 def fusoku(tr):
+    """風速"""
     row = []
     for i, td in enumerate(tr.find_all("td")):
         text = td.get_text()
@@ -122,6 +134,7 @@ def fusoku(tr):
 
 
 def kion(tr):
+    """気温"""
     row = []
     for i, td in enumerate(tr.find_all("td")):
         text = td.get_text()
@@ -142,6 +155,7 @@ def kion(tr):
 
 
 def kion_week(tr):
+    """気温（週間）"""
     row = []
     for i, td in enumerate(tr.find_all("td")):
         text = td.get_text()
@@ -166,6 +180,7 @@ def kion_week(tr):
 
 
 def shitsudo(tr):
+    """湿度"""
     row = []
     for i, td in enumerate(tr.find_all("td")):
         text = td.get_text()
@@ -182,7 +197,8 @@ def shitsudo(tr):
     return row
 
 
-def disp_day_table(config: Config, soup, idname, table_title):
+def disp_day_table(config: Config, soup, idname):
+    """日天気予報"""
     pinpoint = soup.find("div", id=idname)
     title = pinpoint.find("h3") if pinpoint else None
     title_text = ""
@@ -235,6 +251,7 @@ def disp_day_table(config: Config, soup, idname, table_title):
 
 
 def kousuikakuritsu(tr):
+    """降水確率"""
     row = []
     for i, td in enumerate(tr.find_all("td")):
         text = td.get_text()
@@ -251,7 +268,8 @@ def kousuikakuritsu(tr):
     return row
 
 
-def disp_week_table(config: Config, soup, idname, table_title):
+def disp_week_table(config: Config, soup, idname):
+    """週間天気"""
     pinpoint = soup.find("div", id=idname)
     title = pinpoint.find("h2") if pinpoint else None
     title_text = ""
@@ -299,6 +317,7 @@ def disp_week_table(config: Config, soup, idname, table_title):
 
 
 def read_conf():
+    """configファイル読み込み"""
     with open(CONFIG_FILE, mode="rb") as f:
         toml: dict[str, Any] = tomllib.load(f)
 
@@ -306,7 +325,7 @@ def read_conf():
 
 
 def main():
-
+    """main"""
     # 基本的なStreamHandler(sys.stdout)の設定例
     handler = logging.StreamHandler(sys.stdout)
     logger.addHandler(handler)
@@ -325,14 +344,14 @@ def main():
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.d else logging.INFO)
-    logging.debug(f"{args.r=}")
+    logging.debug("{args.r=%s", args.r)
     htmltext = get_html(config, force=args.r)
     soup = BeautifulSoup(htmltext, "html.parser")
-    disp_day_table(config, soup, "yjw_pinpoint_today", "今日")
+    disp_day_table(config, soup, "yjw_pinpoint_today")
     if args.a:
-        disp_day_table(config, soup, "yjw_pinpoint_tomorrow", "明日")
+        disp_day_table(config, soup, "yjw_pinpoint_tomorrow")
     if args.a:
-        disp_week_table(config, soup, "yjw_week", "週間")
+        disp_week_table(config, soup, "yjw_week")
 
 
 if __name__ == "__main__":
