@@ -8,6 +8,7 @@ yahoo天気を表示する
 
 import logging
 import sys
+import os
 import re
 import argparse
 import tomllib
@@ -20,6 +21,7 @@ from rich.table import Table
 from rich import box
 from bs4 import BeautifulSoup
 from requests_cache import CachedSession
+import selector
 
 CONFIG_DIR = Path.home() / ".config" / "yahooweather"
 CONFIG_FILE = CONFIG_DIR / "yahooweather.conf"
@@ -83,7 +85,7 @@ def tenki(tr):
         if "曇" in text:
             emoji = emoji + "☁"
 
-        if "大雨" in text or "強雨" in text:
+        if "大雨" in text or "強雨" in text or "暴風雨" in text:
             text = f"[bold underline italic on dark_magenta]{text}[/]"
         elif "雨" in text:
             text = f"[bold on blue]{text}[/]"
@@ -125,7 +127,7 @@ def fusoku(tr):
             match = re.search(r"(\d+(?:\.\d+)?)$", text)
             if match:
                 value = float(match.group(1))
-                if value == 3:
+                if value >= 3:
                     # text = f"\033[32m{text}\033[0m"
                     text = f"[green]{text}[/]"
 
@@ -326,11 +328,18 @@ def read_conf():
     return Config(url=toml["yahoo"]["url"], name=toml["yahoo"]["name"])
 
 
+def make_conf():
+    selector.proc()
+
+
 def main():
     """main"""
     # 基本的なStreamHandler(sys.stdout)の設定例
     handler = logging.StreamHandler(sys.stdout)
     logger.addHandler(handler)
+
+    if not os.path.isfile(CONFIG_FILE):
+        make_conf()
 
     config = read_conf()
     parser = argparse.ArgumentParser()
