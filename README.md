@@ -21,5 +21,5 @@ Yahoo天気をターミナル上のTUI（Text-based User Interface）で表示�
 ```bash
 git clone https://github.com/tomok14/yahooweather.git
 cd yahooweather
-python -m pip install --user -e .
+python yahooweather.py
 ```
