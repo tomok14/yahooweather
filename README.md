@@ -31,8 +31,8 @@ python yahooweather.py
 
 ## コンフィグファイル
 
-~/.config/yahooweather/yahooweather.conf - コンフィグファイル(toml形式)
-~/.config/yahooweather/cache.sqlite - Yahoo天気データキャッシュ
+- ~/.config/yahooweather/yahooweather.conf - コンフィグファイル(toml形式)
+- ~/.config/yahooweather/cache.sqlite - Yahoo天気データキャッシュ
 
 ## ファイル
 
