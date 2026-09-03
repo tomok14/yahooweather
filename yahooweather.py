@@ -329,6 +329,7 @@ def read_conf():
 
 
 def make_conf():
+    """confファイル生成"""
     selector.proc()
 
 
