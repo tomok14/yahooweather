@@ -359,7 +359,7 @@ def main():
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.d else logging.INFO)
-    logger.debug(f"{args.r=}")
+    logger.debug("args.r=%s", args.r)
     htmltext = get_html(config, force=args.r)
     soup = BeautifulSoup(htmltext, "html.parser")
     disp_day_table(config, soup, "yjw_pinpoint_today")
