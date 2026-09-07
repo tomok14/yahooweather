@@ -4,9 +4,9 @@ location.dbに保存されている地点を選択します
 
 import sqlite3
 from pathlib import Path
+
+from tomlkit import dumps, table
 from wcwidth import wcswidth
-from tomlkit import dumps
-from tomlkit import table
 
 BASE_URL = "https://weather.yahoo.co.jp"
 CONFIG_FILE = Path.home() / ".config/yahooweather/yahooweather.conf"

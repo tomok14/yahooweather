@@ -12,9 +12,9 @@ https://weather.yahoo.co.jp/weather/jp/13/4410/13214.html - ピンポイント�
 """
 
 import sqlite3
+
 import requests
 from bs4 import BeautifulSoup
-
 
 conn = sqlite3.connect("location.db")
 

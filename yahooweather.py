@@ -6,21 +6,23 @@ yahoo天気を表示する
 
 """
 
+import argparse
 import logging
-import sys
 import os
 import re
-import argparse
-import tomllib
-from typing import Any
-from pathlib import Path
+import sys
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 from zoneinfo import ZoneInfo
-from rich.console import Console
-from rich.table import Table
-from rich import box
+
+import tomllib
 from bs4 import BeautifulSoup
 from requests_cache import CachedSession
+from rich import box
+from rich.console import Console
+from rich.table import Table
+
 import selector
 
 CONFIG_DIR = Path.home() / ".config" / "yahooweather"
@@ -47,6 +49,7 @@ def get_html(config: Config, force=False):
 
     session = CachedSession(CACHE_FILE, expire_after=60 * 60 * 3)  # 3時間キャッシュ
 
+    print(f"session.request('GET') {url=}, {force=}")
     res = session.request("GET", url, force_refresh=force)
 
     if res.from_cache:
@@ -356,7 +359,7 @@ def main():
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.d else logging.INFO)
-    logging.debug("{args.r=%s", args.r)
+    logger.debug(f"{args.r=}")
     htmltext = get_html(config, force=args.r)
     soup = BeautifulSoup(htmltext, "html.parser")
     disp_day_table(config, soup, "yjw_pinpoint_today")
