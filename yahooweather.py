@@ -49,7 +49,7 @@ def get_html(config: Config, force=False):
 
     session = CachedSession(CACHE_FILE, expire_after=60 * 60 * 3)  # 3時間キャッシュ
 
-    print(f"session.request('GET') {url=}, {force=}")
+    logger.debug(f"session.request('GET') {url=}, {force=}")
     res = session.request("GET", url, force_refresh=force)
 
     if res.from_cache:
