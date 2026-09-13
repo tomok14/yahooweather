@@ -207,15 +207,72 @@ def shitsudo(tr):
 def is_past_hour(hour: int) -> bool:
     """指定した時刻が現在時刻より過去か"""
     now = datetime.now(ZoneInfo("Asia/Tokyo"))
-    return hour < now.hour
+    current_forecast_hour = (now.hour // 3) * 3
+    return hour < current_forecast_hour
 
 
 def remove_emoji(text: str) -> str:
+    """絵文字除去"""
     return re.sub(
         r"[\U0001F300-\U0001FAFF\u2600-\u27BF]",
         "",
         text,
     )
+
+
+def check_gray_column(rows, idname):
+    """グレイ列チェック"""
+    past_columns = []
+    for header in rows[0]:
+        match = re.search(r"(\d+)時", header)
+
+        if idname == "yjw_pinpoint_today":
+            if match:
+                hour = int(match.group(1))
+                past_columns.append(is_past_hour(hour))
+            else:
+                past_columns.append(False)
+        else:
+            past_columns.append(False)
+
+    return past_columns
+
+
+def set_header(table, rows, past_columns):
+    """ヘッダセット"""
+    for i, header in enumerate(rows[0]):
+        style = None
+
+        if past_columns[i]:
+            style = "rgb(100,100,100)"
+
+        kwargs = {
+            "header": header,
+            "justify": "center",
+        }
+
+        if style:
+            kwargs["style"] = style
+            kwargs["header_style"] = style
+
+        table.add_column(**kwargs)
+
+
+def set_data(table, rows, past_columns):
+    """データセット"""
+    for row in rows[1:]:
+        new_row = []
+
+        for i, text in enumerate(row):
+            if past_columns[i]:
+                # text = markup(text).plain
+                text_obj = Text.from_markup(text)
+                text = text_obj.plain
+                text = remove_emoji(text)
+
+            new_row.append(text)
+
+        table.add_row(*new_row)
 
 
 def disp_day_table(config: Config, soup, idname):
@@ -259,52 +316,13 @@ def disp_day_table(config: Config, soup, idname):
         rows.append(row)
 
     # グレイ列の事前調査
-    past_columns = []
-
-    for header in rows[0]:
-        match = re.search(r"(\d+)時", header)
-
-        if idname == "yjw_pinpoint_today":
-            if match:
-                hour = int(match.group(1))
-                past_columns.append(is_past_hour(hour))
-            else:
-                past_columns.append(False)
-        else:
-            past_columns.append(False)
+    past_columns = check_gray_column(rows, idname)
 
     # ヘッダ
-    for i, header in enumerate(rows[0]):
-        style = None
-
-        if past_columns[i]:
-            style = "rgb(100,100,100)"
-
-        kwargs = {
-            "header": header,
-            "justify": "center",
-        }
-
-        if style:
-            kwargs["style"] = style
-            kwargs["header_style"] = style
-
-        table.add_column(**kwargs)
+    set_header(table, rows, past_columns)
 
     # データ部分
-    for row in rows[1:]:
-        new_row = []
-
-        for i, text in enumerate(row):
-            if past_columns[i]:
-                # text = markup(text).plain
-                text_obj = Text.from_markup(text)
-                text = text_obj.plain
-                text = remove_emoji(text)
-
-            new_row.append(text)
-
-        table.add_row(*new_row)
+    set_data(table, rows, past_columns)
 
     Console().print(table)
 
