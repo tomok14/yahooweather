@@ -12,6 +12,7 @@ import os
 import re
 import sys
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -22,6 +23,7 @@ from requests_cache import CachedSession
 from rich import box
 from rich.console import Console
 from rich.table import Table
+from rich.text import Text
 
 import selector
 
@@ -202,6 +204,20 @@ def shitsudo(tr):
     return row
 
 
+def is_past_hour(hour: int) -> bool:
+    """指定した時刻が現在時刻より過去か"""
+    now = datetime.now(ZoneInfo("Asia/Tokyo"))
+    return hour < now.hour
+
+
+def remove_emoji(text: str) -> str:
+    return re.sub(
+        r"[\U0001F300-\U0001FAFF\u2600-\u27BF]",
+        "",
+        text,
+    )
+
+
 def disp_day_table(config: Config, soup, idname):
     """日天気予報"""
     pinpoint = soup.find("div", id=idname)
@@ -242,15 +258,53 @@ def disp_day_table(config: Config, soup, idname):
 
         rows.append(row)
 
-    # 列数を決定
-    for i in range(len(rows[0])):
-        table.add_column(
-            header=rows[0][i],
-            justify="center",
-        )
+    # グレイ列の事前調査
+    past_columns = []
 
+    for header in rows[0]:
+        match = re.search(r"(\d+)時", header)
+
+        if idname == "yjw_pinpoint_today":
+            if match:
+                hour = int(match.group(1))
+                past_columns.append(is_past_hour(hour))
+            else:
+                past_columns.append(False)
+        else:
+            past_columns.append(False)
+
+    # ヘッダ
+    for i, header in enumerate(rows[0]):
+        style = None
+
+        if past_columns[i]:
+            style = "rgb(100,100,100)"
+
+        kwargs = {
+            "header": header,
+            "justify": "center",
+        }
+
+        if style:
+            kwargs["style"] = style
+            kwargs["header_style"] = style
+
+        table.add_column(**kwargs)
+
+    # データ部分
     for row in rows[1:]:
-        table.add_row(*row)
+        new_row = []
+
+        for i, text in enumerate(row):
+            if past_columns[i]:
+                # text = markup(text).plain
+                text_obj = Text.from_markup(text)
+                text = text_obj.plain
+                text = remove_emoji(text)
+
+            new_row.append(text)
+
+        table.add_row(*new_row)
 
     Console().print(table)
 
@@ -336,6 +390,11 @@ def make_conf():
     selector.proc()
 
 
+def is_gogo():
+    """午後かどうかを判定する"""
+    return datetime.now(ZoneInfo("Asia/Tokyo")).hour >= 12
+
+
 def main():
     """main"""
     # 基本的なStreamHandler(sys.stdout)の設定例
@@ -363,7 +422,7 @@ def main():
     htmltext = get_html(config, force=args.r)
     soup = BeautifulSoup(htmltext, "html.parser")
     disp_day_table(config, soup, "yjw_pinpoint_today")
-    if args.a:
+    if args.a or is_gogo():
         disp_day_table(config, soup, "yjw_pinpoint_tomorrow")
     if args.a:
         disp_week_table(config, soup, "yjw_week")
