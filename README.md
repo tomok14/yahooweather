@@ -5,7 +5,8 @@ Yahoo天気をターミナル上のTUI（Text-based User Interface）で表示�
 
 ## スクリーンショット
 
-![スクリーンショット](screenshot/screenshot.png)
+![All表示(コマンドラインオプション -a)](screenshot/screenshot_all.png)
+![ノーマル表示(コマンドラインオプション無し)](screenshot/screenshot_day.png)
 
 ## 特長
 
