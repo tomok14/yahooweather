@@ -33,6 +33,13 @@ cd yahooweather
 python yahooweather.py
 ```
 
+## 使用手順
+
+1. selector.pyで地点を設定します。
+: `$ python selector.py`
+2. yahooweather.py本体を実行します。
+: `$ python yahooweather.py`
+
 ## コンフィグファイル
 
 - ~/.config/yahooweather/yahooweather.conf - コンフィグファイル(toml形式)
