@@ -40,6 +40,10 @@ python yahooweather.py
 2. yahooweather.py本体を実行します。
 : `$ python yahooweather.py`
 
+
+* selector.py画面
+![selector.py画面](screenshot/screenshot_selector.png)
+
 ## コンフィグファイル
 
 - ~/.config/yahooweather/yahooweather.conf - コンフィグファイル(toml形式)
