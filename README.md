@@ -63,6 +63,5 @@ python yahooweather.py
 
 ## ライセンス
 
-MITライセンス
-![MITライセンス](https://ja.wikipedia.org/wiki/MIT%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9)
+[MITライセンス](https://ja.wikipedia.org/wiki/MIT%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9)
 
