@@ -1,5 +1,9 @@
 # yahooweather
 
+![](https://img.shields.io/badge/Python-3.14-blue)
+![](https://img.shields.io/badge/MIT-License-blue)
+![](https://img.shields.io/badge/Yahoo-Japan-blue)
+
 Yahoo天気をターミナル上のTUI（Text-based User Interface）で表示する軽量ツールです。  
 ローカル端末から手早く天気予報を確認したい開発者や端末ユーザー向けに設計されています。
 
