@@ -60,3 +60,9 @@ python yahooweather.py
 - selector.py - Yahoo天気の地点データ(location.db)から自分の地点を選択してコンフィグファイルに書き込みするツール。selector.pyを使用せず手動でコンフィグファイルを修正しても良いです。
 - makelocationdb.py - location.dbを作成するツール。location.dbは既に作っていますので新たに作成する必要はありません。
 - yahooweather.conf.sample - コンフィグファイルのサンプル
+
+## ライセンス
+
+MITライセンス
+![MITライセンス](https://ja.wikipedia.org/wiki/MIT%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9)
+
