@@ -1,8 +1,9 @@
 # yahooweather
+![logo](images/logo.png)
 
-![](https://img.shields.io/badge/Python-3.14-blue)
-![](https://img.shields.io/badge/MIT-License-blue)
-![](https://img.shields.io/badge/Yahoo-Japan-blue)
+![badge](https://img.shields.io/badge/Python-3.14-blue)
+![badge](https://img.shields.io/badge/MIT-License-blue)
+![badge](https://img.shields.io/badge/Yahoo-Japan-blue)
 
 Yahoo天気をターミナル上のTUI（Text-based User Interface）で表示する軽量ツールです。  
 ローカル端末から手早く天気予報を確認したい開発者や端末ユーザー向けに設計されています。
@@ -11,9 +12,9 @@ Yahoo天気をターミナル上のTUI（Text-based User Interface）で表示�
 
 
 * ノーマル表示（コマンドラインオプション無し）
-![ノーマル表示(コマンドラインオプション無し)](screenshot/screenshot_day.png)
+![ノーマル表示(コマンドラインオプション無し)](images/screenshot_day.png)
 * All表示（コマンドラインオプション -a）
-![All表示(コマンドラインオプション -a)](screenshot/screenshot_all.png)
+![All表示(コマンドラインオプション -a)](images/screenshot_all.png)
 
 ## 特長
 
@@ -46,7 +47,7 @@ python yahooweather.py
 
 
 * selector.py画面
-![selector.py画面](screenshot/screenshot_selector.png)
+![selector.py画面](images/screenshot_selector.png)
 
 ## コンフィグファイル
 
