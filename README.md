@@ -59,6 +59,12 @@ python yahooweather.py
 - すでに過ぎた時刻は灰色表示されます。
 - 12:00以降に実行した場合、翌日の天気も表示されます。
 
+## おすすめ設定
+
+```~/.bashrc
+alias yw=`python3 $(インストールディレクトリ)/yahooweather.py`
+```
+
 ## ファイル
 
 - yahooweather.py - 本体
