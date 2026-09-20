@@ -5,7 +5,8 @@ location.dbに保存されている地点を選択します
 import sqlite3
 from pathlib import Path
 
-from tomlkit import dumps, table
+import tomlkit
+from tomlkit import aot, dumps, parse, table
 from wcwidth import wcswidth
 
 BASE_URL = "https://weather.yahoo.co.jp"
@@ -32,16 +33,54 @@ def save_config(name, url):
     """
     選択された地点をyahooweather.py の
     コンフィグ(~/.config/yahooweather/yahooweather.conf) に
-    書き込みます
+    追記します
+    形式は複数サイト対応の [[yahoo]] (Array of Tables) です
     """
     CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-    config = table()
-    config["name"] = name
-    config["url"] = url
+    new_entry = table()
+    new_entry["name"] = name
+    new_entry["url"] = url
 
-    document = table()
-    document["yahoo"] = config
+    if CONFIG_FILE.is_file():
+        text = CONFIG_FILE.read_text(encoding="utf-8")
+        if text.strip() == "":
+            document = tomlkit.document()
+            sites = aot()
+            sites.append(new_entry)
+            document["yahoo"] = sites
+        else:
+            document = parse(text)
+            yahoo = document.get("yahoo")
+            if yahoo is None:
+                sites = aot()
+                sites.append(new_entry)
+                document["yahoo"] = sites
+            elif isinstance(yahoo, dict):
+                # 旧形式 [yahoo] (単一サイト) を新形式 [[yahoo]] に移行して追記
+                if yahoo.get("url") == url:
+                    print(f"既に登録されています: name = {name}, url = {url}")
+                    return
+                old = table()
+                old["name"] = yahoo.get("name", "")
+                old["url"] = yahoo.get("url", "")
+                sites = aot()
+                sites.append(old)
+                sites.append(new_entry)
+                document["yahoo"] = sites
+            elif isinstance(yahoo, list):
+                for entry in yahoo:
+                    if isinstance(entry, dict) and entry.get("url") == url:
+                        print(f"既に登録されています: name = {name}, url = {url}")
+                        return
+                yahoo.append(new_entry)
+            else:
+                raise TypeError(f"不正な設定形式です: {CONFIG_FILE}")
+    else:
+        document = tomlkit.document()
+        sites = aot()
+        sites.append(new_entry)
+        document["yahoo"] = sites
 
     CONFIG_FILE.write_text(
         dumps(document),
@@ -49,9 +88,13 @@ def save_config(name, url):
     )
 
     print()
-    print(f"設定を書き込みました: {CONFIG_FILE}")
+    print(f"設定を追記しました: {CONFIG_FILE}")
     print(f"name = {name}")
     print(f"url = {url}")
+    print()
+    print("登録済みサイト一覧:")
+    for i, entry in enumerate(document["yahoo"], start=1):
+        print(f"{i}: {entry.get('name')} ({entry.get('url')})")
 
 
 def proc():

@@ -11,7 +11,7 @@ import logging
 import os
 import re
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -35,17 +35,24 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=False)
-class Config:
-    """Config"""
+class ConfigSite:
+    """ConfigSite"""
 
     url: str = ""
     name: str = ""
 
 
-def get_html(config: Config, force=False):
+@dataclass(frozen=False)
+class Config:
+    """Config"""
+
+    sets: list[ConfigSite] = field(default_factory=lambda: [ConfigSite()])
+
+
+def get_html(site: ConfigSite, force=False):
     """HTML取得"""
     # スクレイピング対象の URL にリクエストを送り HTML を取得する
-    url = config.url
+    url = site.url
     # res = requests.get(url)
     # キャッシュセッションの作成（SQLiteを使用）
 
@@ -275,7 +282,7 @@ def set_data(table, rows, past_columns):
         table.add_row(*new_row)
 
 
-def disp_day_table(config: Config, soup, idname):
+def disp_day_table(site: ConfigSite, soup, idname):
     """日天気予報"""
     pinpoint = soup.find("div", id=idname)
     title = pinpoint.find("h3") if pinpoint else None
@@ -288,7 +295,7 @@ def disp_day_table(config: Config, soup, idname):
     if yahoo_table is None:
         return
 
-    title_text = f"{config.name} - {title_text}"
+    title_text = f"{site.name} - {title_text}"
     table = Table(
         title=title_text,
         show_header=True,
@@ -345,7 +352,7 @@ def kousuikakuritsu(tr):
     return row
 
 
-def disp_week_table(config: Config, soup, idname):
+def disp_week_table(site: ConfigSite, soup, idname):
     """週間天気"""
     pinpoint = soup.find("div", id=idname)
     title = pinpoint.find("h2") if pinpoint else None
@@ -354,7 +361,7 @@ def disp_week_table(config: Config, soup, idname):
         title_text = title.get_text()
         title_text = " ".join(title_text.split())
 
-    title_text = f"{config.name} {title_text}"
+    title_text = f"{site.name} {title_text}"
 
     yahoo_table = pinpoint.find("table") if pinpoint else None
     if yahoo_table is None:
@@ -400,7 +407,34 @@ def read_conf():
     with open(CONFIG_FILE, mode="rb") as f:
         toml: dict[str, Any] = tomllib.load(f)
 
-    return Config(url=toml["yahoo"]["url"], name=toml["yahoo"]["name"])
+    yahoo = toml.get("yahoo")
+    if yahoo is None:
+        return Config()
+    if isinstance(yahoo, dict):
+        # 旧形式 [yahoo] (単一サイト) との互換性
+        yahoo_list = [yahoo]
+    elif isinstance(yahoo, list):
+        # 新形式 [[yahoo]] (複数サイト)
+        yahoo_list = yahoo
+    else:
+        raise TypeError(f"不正な設定形式です: {CONFIG_FILE}")
+
+    sets = [
+        ConfigSite(
+            url=item.get("url", ""),
+            name=item.get("name", ""),
+        )
+        for item in yahoo_list
+    ]
+    if not sets:
+        return Config()
+    return Config(sets=sets)
+
+
+def list_sites(config: Config):
+    """設定されているサイト一覧表示"""
+    for i, site in enumerate(config.sets, start=1):
+        print(f"{i}: {site.name} ({site.url})")
 
 
 def make_conf():
@@ -432,18 +466,45 @@ def main():
     )
     parser.add_argument("-a", action="store_true", help="今日／明日／週間全部表示(All)")
     parser.add_argument("-d", action="store_true", help="Debug")
+    parser.add_argument(
+        "-n",
+        "--number",
+        type=int,
+        default=1,
+        metavar="N",
+        help="何番目のサイトを表示するか指定します(番号は -l で確認, default: 1)",
+    )
+    parser.add_argument(
+        "-l",
+        "--list",
+        action="store_true",
+        help="設定されているサイトの一覧を表示します(List)",
+    )
 
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.d else logging.INFO)
     logger.debug("args.r=%s", args.r)
-    htmltext = get_html(config, force=args.r)
+    logger.debug("args.n=%s", args.number)
+
+    if args.list:
+        list_sites(config)
+        return
+
+    if not 1 <= args.number <= len(config.sets):
+        parser.error(
+            f"サイト番号は 1〜{len(config.sets)} の範囲で指定してください "
+            f"(一覧は -l で確認できます): {args.number}"
+        )
+
+    site = config.sets[args.number - 1]
+    htmltext = get_html(site, force=args.r)
     soup = BeautifulSoup(htmltext, "html.parser")
-    disp_day_table(config, soup, "yjw_pinpoint_today")
+    disp_day_table(site, soup, "yjw_pinpoint_today")
     if args.a or is_gogo():
-        disp_day_table(config, soup, "yjw_pinpoint_tomorrow")
+        disp_day_table(site, soup, "yjw_pinpoint_tomorrow")
     if args.a:
-        disp_week_table(config, soup, "yjw_week")
+        disp_week_table(site, soup, "yjw_week")
 
 
 if __name__ == "__main__":
