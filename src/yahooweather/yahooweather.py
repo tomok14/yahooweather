@@ -29,7 +29,8 @@ import selector
 
 CONFIG_DIR = Path.home() / ".config" / "yahooweather"
 CONFIG_FILE = CONFIG_DIR / "yahooweather.conf"
-CACHE_FILE = CONFIG_DIR / "cache"
+CACHE_DIR = Path.home() / ".cache" / "yahooweather"
+CACHE_FILE = CACHE_DIR / "cache"
 
 logger = logging.getLogger(__name__)
 

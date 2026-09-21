@@ -2,6 +2,7 @@
 location.dbに保存されている地点を選択します
 """
 
+import re
 import sqlite3
 from pathlib import Path
 
@@ -82,8 +83,12 @@ def save_config(name, url):
         sites.append(new_entry)
         document["yahoo"] = sites
 
+    text = dumps(document)
+    # [[yahoo]] ブロックの前には空行を1行入れる
+    text = re.sub(r"(?<!\n)\n\[\[yahoo\]\]", "\n\n[[yahoo]]", text)
+
     CONFIG_FILE.write_text(
-        dumps(document),
+        text,
         encoding="utf-8",
     )
 

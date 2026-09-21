@@ -1,0 +1,2 @@
+[console_scripts]
+yahooweather = yahooweather.yahooweather:main
