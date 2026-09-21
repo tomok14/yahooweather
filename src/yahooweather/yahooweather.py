@@ -25,7 +25,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-import selector
+from . import selector
 
 CONFIG_DIR = Path.home() / ".config" / "yahooweather"
 CONFIG_FILE = CONFIG_DIR / "yahooweather.conf"
@@ -454,10 +454,6 @@ def main():
     handler = logging.StreamHandler(sys.stdout)
     logger.addHandler(handler)
 
-    if not os.path.isfile(CONFIG_FILE):
-        make_conf()
-
-    config = read_conf()
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -467,6 +463,7 @@ def main():
     )
     parser.add_argument("-a", action="store_true", help="今日／明日／週間全部表示(All)")
     parser.add_argument("-d", action="store_true", help="Debug")
+    parser.add_argument("-c", action="store_true", help="Config")
     parser.add_argument(
         "-n",
         "--number",
@@ -483,6 +480,15 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.c:
+        make_conf()
+        return
+
+    if not os.path.isfile(CONFIG_FILE):
+        make_conf()
+
+    config = read_conf()
 
     logging.basicConfig(level=logging.DEBUG if args.d else logging.INFO)
     logger.debug("args.r=%s", args.r)

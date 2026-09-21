@@ -12,6 +12,7 @@ from wcwidth import wcswidth
 
 BASE_URL = "https://weather.yahoo.co.jp"
 CONFIG_FILE = Path.home() / ".config/yahooweather/yahooweather.conf"
+LOCATION_FILE = Path.home() / ".local/share/yahooweather/location.db"
 
 
 def print_rows(rows, columns=3):
@@ -104,7 +105,7 @@ def save_config(name, url):
 
 def proc():
     """proc"""
-    conn = sqlite3.connect("location.db")
+    conn = sqlite3.connect(LOCATION_FILE)
     conn.row_factory = sqlite3.Row
 
     try:
