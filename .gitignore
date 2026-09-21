@@ -4,3 +4,4 @@ lintlog
 rufflog
 __pycache__
 dist
+src/*.egg-info

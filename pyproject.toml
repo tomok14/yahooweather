@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yahooweather-tomok14"
-version = "0.0.4"
+version = "0.0.5"
 authors = [{ name = "Example Author", email = "author@example.com" }]
 description = "A small example package"
 readme = "README.md"
@@ -29,3 +29,6 @@ yahooweather = ["data/location.db"]
 
 [project.scripts]
 yahooweather = "yahooweather.yahooweather:main"
+
+[tool.pylint.main]
+source-roots = ["src"]
