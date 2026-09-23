@@ -27,6 +27,7 @@ jobs:
           pip install ruff
       - name: Analysing the code with pylint
         run: |
-          pylint $(git ls-files '*.py' | grep -vE '(^|/)[a-zA-Z]\.py$')
-          ruff check $(git ls-files '*.py' | grep -vE '(^|/)[a-zA-Z]\.py$')
-          pyright $(git ls-files '*.py' | grep -vE '(^|/)[a-zA-Z]\.py$')
+          mapfile -t files < <(git ls-files '*.py' | grep -vE '(^|/)[a-zA-Z]\.py$')
+          pylint "${files[@]}"
+          ruff check "${files[@]}"
+          pyright "${files[@]}"
