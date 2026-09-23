@@ -58,7 +58,7 @@ python yahooweather.py
 
 ## コンフィグファイル
 
-- ~/.config/yahooweather/yahooweather.conf - コンフィグファイル(toml形式)
+- `~/.config/yahooweather/yahooweather.conf` - コンフィグファイル(toml形式)
 
 ## その多機能詳細
 
@@ -73,13 +73,13 @@ alias yw=`yahooweather`
 
 ## ファイル
 
-- yahooweather.py - 本体
-- selector.py - Yahoo天気の地点データ(location.db)から自分の地点を選択してコンフィグファイルに書き込みするツール。selector.pyを使用せず手動でコンフィグファイルを修正しても良いです。
-- makelocationdb.py - location.dbを作成するツール。location.dbは既に作っていますので新たに作成する必要はありません。
-- yahooweather.conf.sample - コンフィグファイルのサンプル
-- ~/.config/yahooweather/yahooweahter.conf - 設定ファイル
-- ~/.cache/yahooweather/cache.sqlith - YahooJapanから取得した天気ページのキャッシュ
-- ~/.local/share/yahooweather/location.db - 地点情報（yahooweather初回起動時に自動的にインストールされます）
+- `yahooweather.py` - 本体
+- `selector.py` - Yahoo天気の地点データ(location.db)から自分の地点を選択してコンフィグファイルに書き込みするツール。selector.pyを使用せず手動でコンフィグファイルを修正しても良いです。
+- `makelocationdb.py` - location.dbを作成するツール。location.dbは既に作っていますので新たに作成する必要はありません。
+- `yahooweather.conf.sample` - コンフィグファイルのサンプル
+- `~/.config/yahooweather/yahooweahter.conf` - 設定ファイル
+- `~/.cache/yahooweather/cache.sqlith` - YahooJapanから取得した天気ページのキャッシュ
+- `~/.local/share/yahooweather/location.db` - 地点情報（yahooweather初回起動時に自動的にインストールされます）
 
 ## ライセンス
 
