@@ -32,7 +32,7 @@ Yahoo天気をターミナル上のTUI（Text-based User Interface）で表示�
 
 1. PIPから（推奨）
 ```bash
-pip install yahooweather-tomok14
+pip install yahooweather-cli
 ```
 
 2. ソースから

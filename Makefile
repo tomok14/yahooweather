@@ -3,6 +3,7 @@ PYFILES := $(shell git ls-files '*.py')
 CACHEDIR := ~/.cache/yahooweather
 CONFIGDIR := ~/.config/yahooweather
 SHAREDIR := ~/.local/share/yahooweather
+PROJECTNAME := yahooweather-cli
 
 
 lint:
@@ -14,13 +15,13 @@ lint:
 #	cp location.db $(SHAREDIR)/location.db
 
 install:
-	python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps yahooweather-tomok14
+	python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps $(PROJECTNAME)
 
 upgrade:
-	python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade yahooweather-tomok14
+	python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade $(PROJECTNAME)
 
 list:
-	python3 -m pip index versions yahooweather-tomok14 --index-url https://test.pypi.org/simple/
+	python3 -m pip index versions $(PROJECTNAME) --index-url https://test.pypi.org/simple/
 
 build:
 	python3 -m build

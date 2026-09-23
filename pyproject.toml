@@ -3,8 +3,8 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "yahooweather-tomok14"
-version = "0.0.8"
+name = "yahooweather-cli"
+version = "0.0.10"
 authors = [{ name = "tomok14", email = "nolamiller1203@gmail.com" }]
 description = "yahooweather command line tool"
 readme = "README.md"
