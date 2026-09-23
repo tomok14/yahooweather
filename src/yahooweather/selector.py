@@ -3,6 +3,7 @@ location.dbに保存されている地点を選択します
 """
 
 import re
+import shutil
 import sqlite3
 from pathlib import Path
 
@@ -12,7 +13,9 @@ from wcwidth import wcswidth
 
 BASE_URL = "https://weather.yahoo.co.jp"
 CONFIG_FILE = Path.home() / ".config/yahooweather/yahooweather.conf"
-LOCATION_FILE = Path.home() / ".local/share/yahooweather/location.db"
+DATA_DIR = Path.home() / ".local" / "share" / "yahooweather"
+LOCATION_FILE = DATA_DIR / "location.db"
+PACKAGE_LOCATION_FILE = Path(__file__).parent / "data" / "location.db"
 
 
 def print_rows(rows, columns=3):
@@ -103,8 +106,18 @@ def save_config(name, url):
         print(f"{i}: {entry.get('name')} ({entry.get('url')})")
 
 
+def init_location_db() -> None:
+    """location.dbコピー"""
+    if LOCATION_FILE.exists():
+        return
+
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(PACKAGE_LOCATION_FILE, LOCATION_FILE)
+
+
 def proc():
     """proc"""
+    init_location_db()
     conn = sqlite3.connect(LOCATION_FILE)
     conn.row_factory = sqlite3.Row
 

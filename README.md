@@ -30,7 +30,12 @@ Yahoo天気をターミナル上のTUI（Text-based User Interface）で表示�
 
 ## インストール
 
-1. ソースから（推奨）
+1. PIPから（推奨）
+```bash
+pip install yahooweather-tomok14
+```
+
+2. ソースから
 
 ```bash
 git clone https://github.com/tomok14/yahooweather.git
@@ -40,19 +45,20 @@ python yahooweather.py
 
 ## 使用手順
 
-1. selector.pyで地点を設定します。
-: `$ python selector.py`
-2. yahooweather.py本体を実行します。
+1. yahooweather.py本体を実行します。
 : `$ python yahooweather.py`
 
+2. 初回起動時は地点の設定が始まります。
+設定は
+`~/.config/yahooweather/yahooweather.conf`
+に保存されます。
 
-* selector.py画面
+* 地点設定画面
 ![selector.py画面](images/screenshot_selector.png)
 
 ## コンフィグファイル
 
 - ~/.config/yahooweather/yahooweather.conf - コンフィグファイル(toml形式)
-- ~/.config/yahooweather/cache.sqlite - Yahoo天気データキャッシュ
 
 ## その多機能詳細
 
@@ -62,7 +68,7 @@ python yahooweather.py
 ## おすすめ設定
 
 ```~/.bashrc
-alias yw=`python3 $(インストールディレクトリ)/yahooweather.py`
+alias yw=`yahooweather`
 ```
 
 ## ファイル
@@ -71,6 +77,9 @@ alias yw=`python3 $(インストールディレクトリ)/yahooweather.py`
 - selector.py - Yahoo天気の地点データ(location.db)から自分の地点を選択してコンフィグファイルに書き込みするツール。selector.pyを使用せず手動でコンフィグファイルを修正しても良いです。
 - makelocationdb.py - location.dbを作成するツール。location.dbは既に作っていますので新たに作成する必要はありません。
 - yahooweather.conf.sample - コンフィグファイルのサンプル
+- ~/.config/yahooweather/yahooweahter.conf - 設定ファイル
+- ~/.cache/yahooweather/cache.sqlith - YahooJapanから取得した天気ページのキャッシュ
+- ~/.local/share/yahooweather/location.db - 地点情報（yahooweather初回起動時に自動的にインストールされます）
 
 ## ライセンス
 

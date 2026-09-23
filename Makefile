@@ -1,4 +1,5 @@
-PYFILES := $(shell printf '%s\n' *.py | grep -vE '^[a-zA-Z]\.py$$')
+#PYFILES := $(git ls-files '*.py' | grep -vE '^[a-zA-Z]\.py$$')
+PYFILES := $(shell git ls-files '*.py')
 CACHEDIR := ~/.cache/yahooweather
 CONFIGDIR := ~/.config/yahooweather
 SHAREDIR := ~/.local/share/yahooweather
