@@ -23,6 +23,10 @@ jobs:
           pip install wcwidth
           pip install rich
           pip install requests-cache
+          pip install pyright
+          pip install ruff
       - name: Analysing the code with pylint
         run: |
           pylint $(git ls-files '*.py' | grep -vE '(^|/)[a-zA-Z]\.py$')
+          ruff check $(git ls-files '*.py' | grep -vE '(^|/)[a-zA-Z]\.py$')
+          pyright $(git ls-files '*.py' | grep -vE '(^|/)[a-zA-Z]\.py$')
