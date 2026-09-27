@@ -2,6 +2,7 @@
 ?.py
 lintlog
 rufflog
+pyrightlog
 __pycache__
 dist
 src/*.egg-info

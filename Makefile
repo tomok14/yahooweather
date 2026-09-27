@@ -9,6 +9,7 @@ PROJECTNAME := yahooweather-cli
 lint:
 	pylint $(PYFILES) | tee lintlog
 	ruff check $(PYFILES) | tee rufflog
+	pyright $(PYFILES) | tee pyrightlog
 
 #install:
 #	mkdir -p $(SHAREDIR)
@@ -28,6 +29,9 @@ build:
 
 upload:
 	python3 -m twine upload --repository testpypi dist/*
+
+upload_honban:
+	python3 -m twine upload --repository pypi dist/*
 
 clean:
 	rm -rf dist build src/*.egg-info

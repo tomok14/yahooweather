@@ -46,7 +46,7 @@ python yahooweather.py
 ## 使用手順
 
 1. yahooweather.py本体を実行します。
-: `$ python yahooweather.py`
+: `$ yahooweather` or `$ python yahooweather.py`
 
 2. 初回起動時は地点の設定が始まります。
 設定は
