@@ -1,7 +1,7 @@
 # yahooweather
 ![logo](images/logo.png)
 
-![badge](https://img.shields.io/badge/Python-3.14-blue)
+![badge](https://img.shields.io/badge/Python-3.14-blue?logo=Python)
 ![badge](https://img.shields.io/badge/MIT-License-blue)
 ![badge](https://img.shields.io/badge/Yahoo-Japan-blue)
 [![Pylint](https://github.com/tomok14/yahooweather/actions/workflows/pylint.yml/badge.svg)](https://github.com/tomok14/yahooweather/actions/workflows/pylint.yml)
